@@ -27,18 +27,19 @@
             justify-content: center;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
             position: relative;
         }
 
-        .day-box:hover { border-color: #1a73e8; transform: translateY(-2px); }
+        .day-box:hover { border-color: #1a73e8; transform: translateY(-3px); }
+        .day-box:active { transform: scale(0.9); }
 
-        /* Style when completed */
         .day-box.completed {
             background-color: #34a853;
             color: white;
             border-color: #34a853;
+            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.4);
         }
 
         .day-box.completed::after {
@@ -51,22 +52,18 @@
         .progress-bar {
             width: 100%;
             max-width: 500px;
-            height: 10px;
+            height: 12px;
             background: #dadce0;
-            border-radius: 5px;
+            border-radius: 6px;
             margin-bottom: 20px;
             overflow: hidden;
         }
 
         #progress-fill {
             height: 100%;
-            background: #34a853;
+            background: linear-gradient(90deg, #34a853, #42f57e);
             width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        @media (max-width: 400px) {
-            .grid { grid-template-columns: repeat(4, 1fr); }
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
         }
     </style>
 </head>
@@ -86,7 +83,10 @@
         const grid = document.getElementById('grid');
         const progressFill = document.getElementById('progress-fill');
 
-        // Load saved progress
+        // Satisfying Click Sound Link
+        const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+        const uncheckSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+
         let completedDays = JSON.parse(localStorage.getItem('challengeProgress')) || [];
 
         function updateProgress() {
@@ -104,10 +104,19 @@
                 if (box.classList.contains('completed')) {
                     box.classList.remove('completed');
                     completedDays = completedDays.filter(day => day !== i);
+                    
+                    // Uncheck sound
+                    uncheckSound.currentTime = 0;
+                    uncheckSound.play();
                 } else {
                     box.classList.add('completed');
                     completedDays.push(i);
+                    
+                    // Check sound (Satisfying!)
+                    clickSound.currentTime = 0;
+                    clickSound.play();
                 }
+                
                 localStorage.setItem('challengeProgress', JSON.stringify(completedDays));
                 updateProgress();
             };
