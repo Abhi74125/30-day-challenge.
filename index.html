@@ -3,91 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>30-Day Transformation</title>
+    <title>30-Day Transformation | Elite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        h1 { color: #1a73e8; margin-bottom: 10px; }
-        p { color: #5f6368; margin-bottom: 25px; }
+        :root {
+            --primary: #1a73e8;
+            --success: #34a853;
+            --bg: #f8f9fa;
+            --card-border: #dadce0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            background-color: var(--bg); 
+            display: flex; flex-direction: column; align-items: center; 
+            padding: 20px; min-height: 100vh; margin: 0;
+        }
+
+        h1 { color: #202124; margin-bottom: 5px; font-weight: 700; letter-spacing: -0.5px; }
+        p { color: #5f6368; margin-bottom: 30px; font-size: 0.95rem; }
         
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 15px; 
-            max-width: 500px; 
-            width: 100%;
+        /* Progress Container */
+        .stats-container {
+            width: 100%; max-width: 500px;
+            background: white; padding: 20px; border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 25px;
+            box-sizing: border-box;
         }
 
-        .day-box {
-            aspect-ratio: 1/1;
-            background: white;
-            border: 2px solid #dadce0;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column; /* Icon aur text ko align karne ke liye */
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            user-select: none;
-            position: relative;
-        }
-
-        /* Electric Symbol (Bolt) Styling */
-        .day-box i {
-            font-size: 14px;
-            color: #dadce0; /* Default color before complete */
-            margin-bottom: 4px;
-        }
-
-        .day-box:hover { border-color: #1a73e8; transform: translateY(-3px); }
-        .day-box:active { transform: scale(0.9); }
-
-        .day-box.completed {
-            background-color: #34a853;
-            color: white;
-            border-color: #34a853;
-            box-shadow: 0 4px 15px rgba(52, 168, 83, 0.4);
-        }
-
-        .day-box.completed i {
-            color: white; /* Completed hone par icon white ho jayega */
-        }
-
-        .day-box.completed::after {
-            content: '✓';
-            position: absolute;
-            font-size: 10px;
-            bottom: 3px;
+        .progress-header {
+            display: flex; justify-content: space-between;
+            margin-bottom: 10px; font-weight: 600; color: #3c4043;
         }
 
         .progress-bar {
-            width: 100%;
-            max-width: 500px;
-            height: 12px;
-            background: #dadce0;
-            border-radius: 6px;
-            margin-bottom: 20px;
+            width: 100%; height: 10px;
+            background: #e8eaed; border-radius: 10px;
             overflow: hidden;
         }
 
         #progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #34a853, #42f57e);
+            background: linear-gradient(90deg, #34a853, #b7eb8f);
             width: 0%;
-            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        /* Grid Styling */
+        .grid { 
+            display: grid; grid-template-columns: repeat(5, 1fr); 
+            gap: 12px; max-width: 500px; width: 100%;
+        }
+
+        .day-box {
+            aspect-ratio: 1/1; background: white;
+            border: 2px solid var(--card-border); border-radius: 14px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-weight: 700; cursor: pointer;
+            transition: all 0.3s ease; position: relative;
+            animation: fadeIn 0.5s ease backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .day-box i { font-size: 12px; color: #bdc1c6; margin-bottom: 4px; transition: 0.3s; }
+
+        .day-box:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(26, 115, 232, 0.1);
+        }
+
+        .day-box.completed {
+            background-color: var(--success);
+            color: white; border-color: var(--success);
+            box-shadow: 0 8px 20px rgba(52, 168, 83, 0.3);
+        }
+
+        .day-box.completed i { color: rgba(255,255,255,0.8); transform: scale(1.2); }
+
+        .day-box.completed::after {
+            content: 'READY'; position: absolute;
+            font-size: 7px; bottom: 6px; letter-spacing: 1px; opacity: 0.8;
+        }
+
+        @media (max-width: 450px) {
+            .grid { gap: 8px; }
+            .day-box { border-radius: 10px; }
         }
     </style>
 </head>
 <body>
 
-    <h1>Day 30 Challenge</h1>
-    <p>One day at a time. Stay focused.</p>
+    <h1>30-Day Mastery</h1>
+    <p>Consistency is the only shortcut.</p>
 
-    <div class="progress-bar">
-        <div id="progress-fill"></div>
+    <div class="stats-container">
+        <div class="progress-header">
+            <span>Overall Progress</span>
+            <span id="progress-text">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progress-fill"></div>
+        </div>
     </div>
 
     <div class="grid" id="grid"></div>
@@ -96,27 +120,32 @@
         const totalDays = 30;
         const grid = document.getElementById('grid');
         const progressFill = document.getElementById('progress-fill');
+        const progressText = document.getElementById('progress-text');
 
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
         const uncheckSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
 
-        let completedDays = JSON.parse(localStorage.getItem('challengeProgress')) || [];
+        let completedDays = JSON.parse(localStorage.getItem('masteryProgress')) || [];
 
-        function updateProgress() {
-            const percent = (completedDays.length / totalDays) * 100;
+        function updateUI() {
+            const count = completedDays.length;
+            const percent = Math.round((count / totalDays) * 100);
             progressFill.style.width = percent + '%';
+            progressText.innerText = percent + '%';
         }
 
         for (let i = 1; i <= totalDays; i++) {
             const box = document.createElement('div');
             box.classList.add('day-box');
+            // Staggered animation delay
+            box.style.animationDelay = (i * 0.03) + 's';
+            
             if (completedDays.includes(i)) box.classList.add('completed');
             
-            // Adding the bolt icon and the day number
             box.innerHTML = `<i class="fas fa-bolt"></i><span>${i}</span>`;
 
             box.onclick = () => {
-                if (box.classList.contains('completed')) {
+                if (completedDays.includes(i)) {
                     box.classList.remove('completed');
                     completedDays = completedDays.filter(day => day !== i);
                     uncheckSound.currentTime = 0;
@@ -127,25 +156,26 @@
                     clickSound.currentTime = 0;
                     clickSound.play();
 
-                    // Agar Day 30 click hua hai ya saare 30 din poore ho gaye hain
                     if (i === 30 || completedDays.length === 30) {
-                        confetti({
-                            particleCount: 150,
-                            spread: 70,
-                            origin: { y: 0.6 },
-                            colors: ['#34a853', '#42f57e', '#ffffff']
-                        });
+                        const duration = 3 * 1000;
+                        const end = Date.now() + duration;
+
+                        (function frame() {
+                            confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#34a853', '#1a73e8'] });
+                            confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#34a853', '#1a73e8'] });
+                            if (Date.now() < end) requestAnimationFrame(frame);
+                        }());
                     }
                 }
                 
-                localStorage.setItem('challengeProgress', JSON.stringify(completedDays));
-                updateProgress();
+                localStorage.setItem('masteryProgress', JSON.stringify(completedDays));
+                updateUI();
             };
 
             grid.appendChild(box);
         }
         
-        updateProgress();
+        updateUI();
     </script>
 </body>
 </html>
