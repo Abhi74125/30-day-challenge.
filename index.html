@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>30-Day Transformation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         h1 { color: #1a73e8; margin-bottom: 10px; }
@@ -23,6 +25,7 @@
             border: 2px solid #dadce0;
             border-radius: 12px;
             display: flex;
+            flex-direction: column; /* Icon aur text ko align karne ke liye */
             align-items: center;
             justify-content: center;
             font-weight: bold;
@@ -30,6 +33,13 @@
             transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             user-select: none;
             position: relative;
+        }
+
+        /* Electric Symbol (Bolt) Styling */
+        .day-box i {
+            font-size: 14px;
+            color: #dadce0; /* Default color before complete */
+            margin-bottom: 4px;
         }
 
         .day-box:hover { border-color: #1a73e8; transform: translateY(-3px); }
@@ -42,11 +52,15 @@
             box-shadow: 0 4px 15px rgba(52, 168, 83, 0.4);
         }
 
+        .day-box.completed i {
+            color: white; /* Completed hone par icon white ho jayega */
+        }
+
         .day-box.completed::after {
             content: '✓';
             position: absolute;
-            font-size: 12px;
-            bottom: 5px;
+            font-size: 10px;
+            bottom: 3px;
         }
 
         .progress-bar {
@@ -83,7 +97,6 @@
         const grid = document.getElementById('grid');
         const progressFill = document.getElementById('progress-fill');
 
-        // Satisfying Click Sound Link
         const clickSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
         const uncheckSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
 
@@ -98,23 +111,31 @@
             const box = document.createElement('div');
             box.classList.add('day-box');
             if (completedDays.includes(i)) box.classList.add('completed');
-            box.innerText = i;
+            
+            // Adding the bolt icon and the day number
+            box.innerHTML = `<i class="fas fa-bolt"></i><span>${i}</span>`;
 
             box.onclick = () => {
                 if (box.classList.contains('completed')) {
                     box.classList.remove('completed');
                     completedDays = completedDays.filter(day => day !== i);
-                    
-                    // Uncheck sound
                     uncheckSound.currentTime = 0;
                     uncheckSound.play();
                 } else {
                     box.classList.add('completed');
                     completedDays.push(i);
-                    
-                    // Check sound (Satisfying!)
                     clickSound.currentTime = 0;
                     clickSound.play();
+
+                    // Agar Day 30 click hua hai ya saare 30 din poore ho gaye hain
+                    if (i === 30 || completedDays.length === 30) {
+                        confetti({
+                            particleCount: 150,
+                            spread: 70,
+                            origin: { y: 0.6 },
+                            colors: ['#34a853', '#42f57e', '#ffffff']
+                        });
+                    }
                 }
                 
                 localStorage.setItem('challengeProgress', JSON.stringify(completedDays));
